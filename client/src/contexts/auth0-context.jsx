@@ -46,7 +46,7 @@ export const Auth0Provider = ({
       setIsLoading(false)
     }
     initializeAuth0()
-  })
+  },[])
 
   const handleRedirectCallback = async () => {
     setIsLoading(true)
