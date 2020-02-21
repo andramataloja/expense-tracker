@@ -1,15 +1,20 @@
 import React from "react"
-import { useAuth0 } from "./contexts/auth0-context"
 import Header from "./components/Header"
 import Users from "./components/Users"
+import DoughnutChart from "./components/DoughnutChart"
 
+import Routes from "./routes";
 
-function App() {
-  const { isLoading, user } = useAuth0()
+const App = () => {
+
+/*   const { isLoading, user } = useAuth0() */
   
   return (
-    <div className="App">
+    <Routes/>
+  
+    /* <Fragment>
       <Header />
+      <DoughnutChart/>
       <Users/>
       <p className="App-intro">
         {!isLoading && user && (
@@ -20,8 +25,9 @@ function App() {
           </div>
         )}
       </p>
-    </div>
-  )
+      </Fragment> */
+  
+  );
 }
 
 export default App

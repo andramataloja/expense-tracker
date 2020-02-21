@@ -1,17 +1,12 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import "./index.css"
-import { BrowserRouter } from "react-router-dom"
 import App from "./App"
-import { Auth0Provider } from "./contexts/auth0-context"
+import { Auth0Provider } from "./utils/auth0-context"
 import * as serviceWorker from "./serviceWorker"
 
 ReactDOM.render(
-  <Auth0Provider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Auth0Provider>,
+      <App />,
   document.getElementById("root")
 )
 

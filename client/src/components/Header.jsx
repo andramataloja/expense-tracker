@@ -1,7 +1,7 @@
 import React from "react"
 import Button from "@material-ui/core/Button"
 import { makeStyles } from "@material-ui/core/styles"
-import { useAuth0 } from "../contexts/auth0-context"
+import { useAuth0 } from "../utils/auth0-context"
 
 const useStyles = makeStyles({
   root: {
