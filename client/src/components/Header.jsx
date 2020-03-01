@@ -1,7 +1,7 @@
-import React from "react"
-import Button from "@material-ui/core/Button"
-import { makeStyles } from "@material-ui/core/styles"
-import { useAuth0 } from "../utils/auth0-context"
+import React from "react";
+import Button from "@material-ui/core/Button";
+import { makeStyles, Box } from "@material-ui/core";
+import { useAuth0 } from "../utils/auth0-context";
 
 const useStyles = makeStyles({
   root: {
@@ -11,18 +11,18 @@ const useStyles = makeStyles({
     height: 38,
     padding: "0 20px"
   }
-})
+});
 
 export default function Header() {
-  const classes = useStyles()
-  const { isLoading, user, loginWithRedirect, logout } = useAuth0()
+  const classes = useStyles();
+  const { isLoading, user, loginWithRedirect, logout } = useAuth0();
 
   return (
     <header>
       <nav>
-        <div>
-          <div>
-            <div>
+        <Box>
+          <Box>
+            <Box>
               {!isLoading && !user && (
                 <Button className={classes.root} onClick={loginWithRedirect}>
                   Login
@@ -39,10 +39,10 @@ export default function Header() {
                   </Button>
                 </>
               )}
-            </div>
-          </div>
-        </div>
+            </Box>
+          </Box>
+        </Box>
       </nav>
     </header>
-  )
+  );
 }

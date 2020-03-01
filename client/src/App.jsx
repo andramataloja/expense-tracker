@@ -1,20 +1,14 @@
-import React from "react"
-import Header from "./components/Header"
-import Users from "./components/Users"
-import DoughnutChart from "./components/DoughnutChart"
-
+import React from "react";
+import Users from "./components/Users";
 import Routes from "./routes";
 
 const App = () => {
+  /*   const { isLoading, user } = useAuth0() */
 
-/*   const { isLoading, user } = useAuth0() */
-  
   return (
-    <Routes/>
-  
+    <Routes />
+
     /* <Fragment>
-      <Header />
-      <DoughnutChart/>
       <Users/>
       <p className="App-intro">
         {!isLoading && user && (
@@ -26,8 +20,6 @@ const App = () => {
         )}
       </p>
       </Fragment> */
-  
   );
-}
-
-export default App
+};
+export default App;

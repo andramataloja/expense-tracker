@@ -1,0 +1,3 @@
+export const FETCH_MONTH = "FETCH_MONTH";
+export const FETCH_YEAR = "FETCH_YEAR";
+export const FETCH_DOUGHNUTDATA = "FETCH_DOUGHNUTDATA";
