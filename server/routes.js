@@ -71,8 +71,8 @@ router.put("/put/expense", (req, res, next) => {
               WHERE expense_id = $5`,
     values,
     (q_err, q_res) => {
-      console.log(q_res);
-      console.log(q_err);
+      if (q_err) return next(q_err);
+      res.json(q_res.rows);
     }
   );
 });
@@ -89,9 +89,12 @@ router.delete("/delete/expense", (req, res, next) => {
 });
 
 router.get("/get/categories", (req, res, next) => {
-  pool.query(`SELECT * FROM category`, (q_err, q_res) => {
-    res.json(q_res.rows);
-  });
+  pool.query(
+    `SELECT * FROM category ORDER BY category_name`,
+    (q_err, q_res) => {
+      res.json(q_res.rows);
+    }
+  );
 });
 
 router.get("/get/months", (req, res, next) => {

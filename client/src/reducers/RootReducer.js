@@ -3,7 +3,9 @@ import * as types from "../actions/action-types";
 const initialState = {
   month: new Date().getMonth(),
   year: new Date().getFullYear(),
-  doughnutData: []
+  doughnutData: [],
+  expenses: [],
+  index: ""
 };
 
 export const rootReducer = (state = initialState, action) => {
@@ -22,6 +24,16 @@ export const rootReducer = (state = initialState, action) => {
       return {
         ...state,
         doughnutData: action.payload
+      };
+    case types.FETCH_EXPENSES:
+      return {
+        ...state,
+        expenses: action.payload
+      };
+    case types.SET_EXPLODEINDEX:
+      return {
+        ...state,
+        index: action.payload
       };
     default:
       return state;

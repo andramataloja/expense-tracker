@@ -20,3 +20,17 @@ export const fetchDoughnutData = data => {
     payload: data
   };
 };
+
+export const fetchExpenses = data => {
+  return {
+    type: types.FETCH_EXPENSES,
+    payload: data
+  };
+};
+
+export const setExplodeIndex = index => {
+  return {
+    type: types.SET_EXPLODEINDEX,
+    payload: index
+  };
+};

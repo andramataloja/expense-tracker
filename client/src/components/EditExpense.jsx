@@ -24,6 +24,8 @@ import {
 import { useAuth0 } from "../utils/auth0-context";
 import axios from "axios";
 import CreateIcon from "@material-ui/icons/Create";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchExpenses } from "../actions/actions";
 
 const useStyles = makeStyles(theme => ({
   updateButton: {
@@ -36,6 +38,9 @@ const useStyles = makeStyles(theme => ({
 
 const EditExpense = props => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const month = useSelector(state => state.month);
+  const year = useSelector(state => state.year);
   const [open, setOpen] = useState(false);
   const [values, setValues] = useState({
     amount: props.expense.amount,
@@ -49,32 +54,45 @@ const EditExpense = props => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
-  const handleCategoryChange = event => {
-    setCategory(event.target.value);
-  };
-
-  const handleDateChange = date => {
-    const formattedDate =
-      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
-    setSelectedDate(formattedDate);
+  const formatDate = date => {
+    return (
+      new Date(date).getFullYear() +
+      "-" +
+      (new Date(date).getMonth() + 1) +
+      "-" +
+      new Date(date).getDate()
+    );
   };
 
   const handleSubmit = event => {
     event.preventDefault();
     //const user_id = user.user_id
+    console.log("enne:", selectedDate);
     const data = {
       description: values.description,
       amount: values.amount,
-      date: selectedDate,
+      date: formatDate(selectedDate),
       //      user_id: user_id,
       category_id: category,
       expense_id: props.expense.expense_id
     };
+    console.log("data to submit:", data);
     axios
       .put("/put/expense", data)
-      .then(response => console.log(response))
+      .then(() => {
+        setOpen(false);
+        axios
+          .get("/allexpensesbydate", {
+            params: { month: month + 1, year: year }
+          })
+          .then(res => {
+            res.data.length !== 0
+              ? dispatch(fetchExpenses(res.data))
+              : dispatch(fetchExpenses([]));
+          })
+          .catch(err => console.log(err));
+      })
       .catch(err => console.log(err));
-    window.location.reload(false);
   };
 
   useEffect(() => {
@@ -125,6 +143,7 @@ const EditExpense = props => {
             </FormControl>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
+                autoOk
                 disableToolbar
                 variant="inline"
                 inputVariant="outlined"
@@ -133,7 +152,7 @@ const EditExpense = props => {
                 id="date-picker-inline"
                 label="Date"
                 value={selectedDate}
-                onChange={handleDateChange}
+                onChange={date => setSelectedDate(date)}
                 KeyboardButtonProps={{
                   "aria-label": "change date"
                 }}
@@ -144,7 +163,7 @@ const EditExpense = props => {
               select
               label="Category"
               value={category}
-              onChange={handleCategoryChange}
+              onChange={event => setCategory(event.target.value)}
               variant="outlined"
               margin="dense"
             >

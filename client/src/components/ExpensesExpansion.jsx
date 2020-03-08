@@ -21,13 +21,14 @@ import CommuteIcon from "@material-ui/icons/Commute";
 import FitnessCenterIcon from "@material-ui/icons/FitnessCenter";
 import HomeWorkIcon from "@material-ui/icons/HomeWork";
 import MovieFilterIcon from "@material-ui/icons/MovieFilter";
-import ListAltIcon from "@material-ui/icons/ListAlt";
-import { useSelector } from "react-redux";
-import axios from "axios";
 import ShoppingCartIcon from "@material-ui/icons/ShoppingCart";
+import ListAltIcon from "@material-ui/icons/ListAlt";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import DeleteDialog from "./DeleteDialog";
 import classNames from "classnames";
 import EditExpense from "./EditExpense";
+import { fetchExpenses, setExplodeIndex } from "../actions/actions";
 
 const useStyles = makeStyles(theme => ({
   categoryName: {
@@ -88,39 +89,66 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ExpensesExpansion = () => {
+  const dispatch = useDispatch();
   const month = useSelector(state => state.month);
   const year = useSelector(state => state.year);
   const doughnutData = useSelector(state => state.doughnutData);
+  const expenses = useSelector(state => state.expenses);
+  const explodeIndex = useSelector(state => state.index);
 
   const [categoryList, setCategoryList] = useState([]);
-  const [expenses, setExpenses] = useState([]);
+  const [expandedList, setExpandedList] = useState({});
+
+  const classes = useStyles();
+
+  const handleChange = panel => (event, newExpanded) => {
+    let swapValue = Object.fromEntries(
+      Object.entries(expandedList).map(([key, value]) => {
+        return key === panel ? [key, !value] : [key, value];
+      })
+    );
+    dispatch(setExplodeIndex(newExpanded ? panel : ""));
+    setExpandedList(swapValue);
+  };
+
+  const generateExpandedList = () => {
+    let list = {};
+    for (let index in categoryList) {
+      list[index] = false;
+    }
+    return list;
+  };
 
   useEffect(() => {
     axios
       .get("/allexpensesbydate", { params: { month: month + 1, year: year } })
       .then(res => {
-        res.data.length !== 0 ? setExpenses(res.data) : setExpenses([]);
+        res.data.length !== 0
+          ? dispatch(fetchExpenses(res.data))
+          : dispatch(fetchExpenses([]));
       })
       .catch(err => console.log(err));
   }, [month, year]);
 
   useEffect(() => {
-    if (expenses && expenses.length > 0) {
-      axios
-        .get("/get/categories")
-        .then(res => {
-          return res.data.length !== 0
-            ? setCategoryList(filterCategories(res.data))
-            : null;
-        })
-        .catch(err => console.log(err));
-    }
+    axios
+      .get("/get/categories")
+      .then(res => {
+        return res.data.length !== 0
+          ? setCategoryList(filterCategories(res.data))
+          : setCategoryList([]);
+      })
+      .catch(err => console.log(err));
   }, [expenses]);
 
+  useEffect(() => {
+    setExpandedList(generateExpandedList());
+  }, [categoryList]);
+
   const filterCategories = categories => {
-    return expenses.map(expense => {
-      return categories.find(
-        category => category.category_id === expense.category_id
+    return categories.filter(category => {
+      return expenses.find(
+        expense => category.category_id === expense.category_id
       );
     });
   };
@@ -172,101 +200,109 @@ const ExpensesExpansion = () => {
     }
   };
 
-  const classes = useStyles();
   return (
     <Paper>
       <Container>
-        <Box py={4}>
-          {categoryList.map(option => (
-            <ExpansionPanel
-              key={option.category_id}
-              value={option.category_id}
-              className={classes.listExpenses}
-            >
-              <ExpansionPanelSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
+        {categoryList.length > 0 && (
+          <Box py={4}>
+            {categoryList.map(option => (
+              <ExpansionPanel
+                key={option.category_id}
+                value={option.category_id}
+                className={classes.listExpenses}
+                expanded={
+                  explodeIndex === categoryList.indexOf(option).toString() ||
+                  expandedList[categoryList.indexOf(option).toString()] === true
+                }
+                onChange={handleChange(categoryList.indexOf(option).toString())}
               >
-                {getCategoryIcon(option.icon)}
-                <Box display="flex" flexDirection="column">
-                  <Box display="flex">
-                    <Typography className={classes.categoryName}>
-                      {option.category_name}
-                    </Typography>
+                <ExpansionPanelSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  {getCategoryIcon(option.icon)}
+                  <Box display="flex" flexDirection="column">
+                    <Box display="flex">
+                      <Typography className={classes.categoryName}>
+                        {option.category_name}
+                      </Typography>
+                      {doughnutData.map(
+                        category =>
+                          category.category_name === option.category_name && (
+                            <Typography
+                              key={option.category_id}
+                              className={classes.categoryPercent}
+                              color="secondary"
+                            >
+                              {category.percent}%
+                            </Typography>
+                          )
+                      )}
+                    </Box>
                     {doughnutData.map(
                       category =>
                         category.category_name === option.category_name && (
-                          <Typography
+                          <LinearProgress
                             key={option.category_id}
-                            className={classes.categoryPercent}
-                            color="secondary"
-                          >
-                            {category.percent}%
-                          </Typography>
+                            variant="determinate"
+                            value={parseInt(category.percent)}
+                            className={classes.progressBar}
+                          />
                         )
                     )}
                   </Box>
-                  {doughnutData.map(
-                    category =>
-                      category.category_name === option.category_name && (
-                        <LinearProgress
-                          key={option.category_id}
-                          variant="determinate"
-                          value={parseInt(category.percent)}
-                          className={classes.progressBar}
-                        />
-                      )
-                  )}
-                </Box>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails>
-                <List className={classes.expensesList}>
-                  {expenses.map(
-                    expense =>
-                      expense.category_id === option.category_id && (
-                        <ListItem divider key={expense.expense_id}>
-                          <Box
-                            display="flex"
-                            flexDirection="column"
-                            width="100%"
-                          >
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <List className={classes.expensesList}>
+                    {expenses.map(
+                      expense =>
+                        expense.category_id === option.category_id && (
+                          <ListItem divider key={expense.expense_id}>
                             <Box
-                              className={classes.expenseDate}
-                              color="text.secondary"
-                            >
-                              {expense.formatted_date}
-                            </Box>
-                            <Box
-                              py={1}
                               display="flex"
-                              flexDirection="row"
+                              flexDirection="column"
                               width="100%"
                             >
-                              <Box>{expense.description}</Box>
-                              <Box ml={8}>{`${expense.amount}€`}</Box>
+                              <Box
+                                className={classes.expenseDate}
+                                color="text.secondary"
+                              >
+                                {expense.formatted_date}
+                              </Box>
+                              <Box
+                                py={1}
+                                display="flex"
+                                flexDirection="row"
+                                width="100%"
+                              >
+                                <Box>{expense.description}</Box>
+                                <Box ml={8}>{`${expense.amount}€`}</Box>
+                              </Box>
                             </Box>
-                          </Box>
-                          <ListItemSecondaryAction>
-                            <Tooltip title="Update">
-                              <IconButton edge="end" aria-label="update">
-                                <EditExpense expense={expense} />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Delete">
-                              <IconButton edge="end" aria-label="delete">
-                                <DeleteDialog expense_id={expense.expense_id} />
-                              </IconButton>
-                            </Tooltip>
-                          </ListItemSecondaryAction>
-                        </ListItem>
-                      )
-                  )}
-                </List>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          ))}
-        </Box>
+                            <ListItemSecondaryAction>
+                              <Tooltip title="Update">
+                                <IconButton edge="end" aria-label="update">
+                                  <EditExpense expense={expense} />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Delete">
+                                <IconButton edge="end" aria-label="delete">
+                                  <DeleteDialog
+                                    expense_id={expense.expense_id}
+                                  />
+                                </IconButton>
+                              </Tooltip>
+                            </ListItemSecondaryAction>
+                          </ListItem>
+                        )
+                    )}
+                  </List>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            ))}
+          </Box>
+        )}
       </Container>
     </Paper>
   );

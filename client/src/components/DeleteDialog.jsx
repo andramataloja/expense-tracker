@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import axios from "axios";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchExpenses } from "../actions/actions";
 
 const useStyles = makeStyles(theme => ({
   deleteCommands: {
@@ -21,15 +23,30 @@ const useStyles = makeStyles(theme => ({
 const DeleteDialog = props => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
+  const dispatch = useDispatch();
+  const expenses = useSelector(state => state.expenses);
 
   const handleDelete = () => {
     axios
       .delete("/delete/expense", {
         data: { expense_id: props.expense_id }
       })
-      .then(res => console.log(res))
+      .then(res =>
+        dispatch(
+          fetchExpenses(
+            expenses.filter(function(el) {
+              return el.expense_id !== props.expense_id;
+            })
+          )
+        )
+      )
       .catch(err => console.log(err));
-    window.location.reload(false);
+    setOpen(false);
+  };
+
+  const deleteProp = (obj, prop) => {
+    let { [prop]: omit, ...res } = obj;
+    return res;
   };
 
   return (
