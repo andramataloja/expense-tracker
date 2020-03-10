@@ -27,6 +27,7 @@ import axios from "axios";
 import AddIcon from "@material-ui/icons/Add";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchExpenses } from "../actions/actions";
+import { useForm, Controller } from "react-hook-form";
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -34,6 +35,10 @@ const useStyles = makeStyles(theme => ({
   },
   addCommands: {
     color: theme.palette.secondary.dark
+  },
+  errorText: {
+    fontSize: "11px",
+    color: "red"
   }
 }));
 
@@ -44,13 +49,15 @@ const AddExpense = props => {
   const month = useSelector(state => state.month);
   const year = useSelector(state => state.year);
   const [open, setOpen] = useState(false);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState(1);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [categoryList, setCategoryList] = useState([]);
   const [values, setValues] = useState({
     amount: "",
     description: ""
   });
+
+  const { register, errors, handleSubmit } = useForm();
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value });
@@ -60,8 +67,7 @@ const AddExpense = props => {
     setValues({ amount: "", description: "" });
   };
 
-  const handleSubmit = event => {
-    event.preventDefault();
+  const onSubmit = event => {
     //const user_id = user.user_id
     const data = {
       description: values.description,
@@ -121,7 +127,12 @@ const AddExpense = props => {
                 value={values.description}
                 onChange={handleChange("description")}
                 label="Description"
+                inputRef={register({ required: true, pattern: /.*\S.*/ })}
+                name="description"
               />
+              <span className={classes.errorText}>
+                {errors.description && "Description is required"}
+              </span>
             </FormControl>
             <FormControl variant="outlined" margin="dense">
               <InputLabel htmlFor="outlined-adornment-amount">
@@ -137,7 +148,12 @@ const AddExpense = props => {
                 label="Amount"
                 type="number"
                 inputProps={{ min: "0" }}
+                name="amount"
+                inputRef={register({ required: true })}
               />
+              <span className={classes.errorText}>
+                {errors.amount && "Amount is required"}
+              </span>
             </FormControl>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
@@ -180,7 +196,10 @@ const AddExpense = props => {
           >
             Cancel
           </Button>
-          <Button onClick={handleSubmit} className={classes.addCommands}>
+          <Button
+            onClick={handleSubmit(onSubmit)}
+            className={classes.addCommands}
+          >
             Add
           </Button>
         </DialogActions>
