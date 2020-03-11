@@ -27,7 +27,7 @@ import axios from "axios";
 import AddIcon from "@material-ui/icons/Add";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchExpenses } from "../actions/actions";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 const useStyles = makeStyles(theme => ({
   addButton: {
@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 
 const AddExpense = props => {
   const classes = useStyles();
-  /* const {user} = useAuth0(); */
+  const { user } = useAuth0();
   const dispatch = useDispatch();
   const month = useSelector(state => state.month);
   const year = useSelector(state => state.year);
@@ -68,13 +68,12 @@ const AddExpense = props => {
   };
 
   const onSubmit = event => {
-    //const user_id = user.user_id
     const data = {
       description: values.description,
       amount: values.amount,
       date: selectedDate,
-      //      user_id: user_id,
-      category_id: category
+      category_id: category,
+      email: user.email
     };
     console.log("data to db", data);
     axios
@@ -84,7 +83,7 @@ const AddExpense = props => {
         clearFields();
         axios
           .get("/allexpensesbydate", {
-            params: { month: month + 1, year: year }
+            params: { month: month + 1, year: year, email: user.email }
           })
           .then(res => {
             res.data.length !== 0

@@ -1,25 +1,16 @@
 import React from "react";
-import Users from "./components/Users";
 import Routes from "./routes";
+import { useAuth0 } from "./utils/auth0-context";
+import Login from "./components/Login";
 
 const App = () => {
-  /*   const { isLoading, user } = useAuth0() */
+  const { isLoading, user, isAuthenticated } = useAuth0();
 
   return (
-    <Routes />
-
-    /* <Fragment>
-      <Users/>
-      <p className="App-intro">
-        {!isLoading && user && (
-          <div>
-            <h1>You are logged in!</h1>
-            <p>Hello {user.name}</p>
-            {user.picture && <img src={user.picture} alt="My Avatar" />}
-          </div>
-        )}
-      </p>
-      </Fragment> */
+    <>
+      {!isLoading && !isAuthenticated && <Login />}
+      {!isLoading && user && isAuthenticated && <Routes />}
+    </>
   );
 };
 export default App;

@@ -54,7 +54,7 @@ const EditExpense = props => {
   const [category, setCategory] = useState(props.expense.category_id);
   const [selectedDate, setSelectedDate] = useState(props.expense.date);
   const [categoryList, setCategoryList] = useState([]);
-
+  const { user } = useAuth0();
   const { register, errors, handleSubmit } = useForm();
 
   const handleChange = prop => event => {
@@ -72,24 +72,21 @@ const EditExpense = props => {
   };
 
   const onSubmit = () => {
-    //const user_id = user.user_id
-    console.log("enne:", selectedDate);
     const data = {
       description: values.description,
       amount: values.amount,
       date: formatDate(selectedDate),
-      //      user_id: user_id,
       category_id: category,
-      expense_id: props.expense.expense_id
+      expense_id: props.expense.expense_id,
+      email: user.email
     };
-    console.log("data to submit:", data);
     axios
       .put("/put/expense", data)
       .then(() => {
         setOpen(false);
         axios
           .get("/allexpensesbydate", {
-            params: { month: month + 1, year: year }
+            params: { month: month + 1, year: year, email: user.email }
           })
           .then(res => {
             res.data.length !== 0

@@ -7,13 +7,14 @@ import {
   AccumulationDataLabel,
   AccumulationTooltip
 } from "@syncfusion/ej2-react-charts";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { Skeleton } from "@material-ui/lab";
-import { Box, makeStyles } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { fetchDoughnutData, setExplodeIndex } from "../actions/actions";
 import * as icons from "../icons/icons";
+import { useAuth0 } from "../utils/auth0-context";
 
 const DoughnutChart = () => {
   const dispatch = useDispatch();
@@ -22,12 +23,13 @@ const DoughnutChart = () => {
   const doughData = useSelector(state => state.doughnutData);
   const expenses = useSelector(state => state.expenses);
   const explodeIndex = useSelector(state => state.index);
+  const { user } = useAuth0();
 
   useEffect(
     () => {
       axios
         .get("/get/doughnutdata", {
-          params: { month: month + 1, year: year }
+          params: { month: month + 1, year: year, email: user.email }
         })
         .then(res => {
           if (res.data.length !== 0) {
@@ -39,7 +41,7 @@ const DoughnutChart = () => {
         })
         .catch(err => console.log(err));
     },
-    [month, year, expenses],
+    [month, year, expenses, user.email],
     console.log("doughData", doughData)
   );
 

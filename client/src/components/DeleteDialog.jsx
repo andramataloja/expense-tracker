@@ -44,11 +44,6 @@ const DeleteDialog = props => {
     setOpen(false);
   };
 
-  const deleteProp = (obj, prop) => {
-    let { [prop]: omit, ...res } = obj;
-    return res;
-  };
-
   return (
     <Box>
       <DeleteIcon color="secondary" onClick={() => setOpen(true)} />

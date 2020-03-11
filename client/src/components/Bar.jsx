@@ -10,12 +10,18 @@ import {
   Box
 } from "@material-ui/core";
 import AccountCircle from "@material-ui/icons/AccountCircle";
+import { useAuth0 } from "../utils/auth0-context";
 
 const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
     color: "#fafafa",
     marginLeft: "30px"
+  },
+  username: {
+    color: "#fafafa",
+    fontFamily: theme.typography.fontFamily,
+    fontSize: "18px"
   }
 }));
 
@@ -23,6 +29,7 @@ const Bar = () => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const { isLoading, user, logout } = useAuth0();
 
   const handleMenu = event => {
     setAnchorEl(event.currentTarget);
@@ -31,7 +38,7 @@ const Bar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  console.log("user", user);
   return (
     <Box>
       <AppBar position="static">
@@ -39,13 +46,14 @@ const Bar = () => {
           <Typography variant="h5" className={classes.title}>
             Monthly Spending
           </Typography>
-          <Box>
+          <Box display="flex" alignItems="inherit">
+            <Box className={classes.username}>{user.name}</Box>
             <IconButton
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleMenu}
-              className={classes.title}
+              className={classes.username}
             >
               <AccountCircle />
             </IconButton>
@@ -64,8 +72,13 @@ const Bar = () => {
               open={open}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>Sign out</MenuItem>
+              {!isLoading && user && (
+                <MenuItem
+                  onClick={() => logout({ returnTo: window.location.origin })}
+                >
+                  Sign out
+                </MenuItem>
+              )}
             </Menu>
           </Box>
         </Toolbar>

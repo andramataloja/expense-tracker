@@ -56,6 +56,7 @@ const DateCarousel = () => {
       <Carousel
         className={classes.carousel}
         centered
+        itemWidth={120}
         arrowRight={
           <ArrowForwardIosRoundedIcon className={classes.customArrow} />
         }
@@ -63,9 +64,8 @@ const DateCarousel = () => {
         arrowLeftDisabled={<Box />}
         arrowRightDisabled={<Box />}
         addArrowClickHandler
-        slidesPerPage={1}
+        slidesPerPage={3}
         clickToChange
-        itemWidth={120}
         value={years.indexOf(yearState)}
         onChange={value => dispatch(fetchYear(years[value]))}
         slides={years.map((year, index) => (

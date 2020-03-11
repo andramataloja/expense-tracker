@@ -29,6 +29,7 @@ import DeleteDialog from "./DeleteDialog";
 import classNames from "classnames";
 import EditExpense from "./EditExpense";
 import { fetchExpenses, setExplodeIndex } from "../actions/actions";
+import { useAuth0 } from "../utils/auth0-context";
 
 const useStyles = makeStyles(theme => ({
   categoryName: {
@@ -95,7 +96,7 @@ const ExpensesExpansion = () => {
   const doughnutData = useSelector(state => state.doughnutData);
   const expenses = useSelector(state => state.expenses);
   const explodeIndex = useSelector(state => state.index);
-
+  const { user } = useAuth0();
   const [categoryList, setCategoryList] = useState([]);
   const [expandedList, setExpandedList] = useState({});
 
@@ -121,14 +122,16 @@ const ExpensesExpansion = () => {
 
   useEffect(() => {
     axios
-      .get("/allexpensesbydate", { params: { month: month + 1, year: year } })
+      .get("/allexpensesbydate", {
+        params: { month: month + 1, year: year, email: user.email }
+      })
       .then(res => {
         res.data.length !== 0
           ? dispatch(fetchExpenses(res.data))
           : dispatch(fetchExpenses([]));
       })
       .catch(err => console.log(err));
-  }, [month, year]);
+  }, [month, year, user.email]);
 
   useEffect(() => {
     axios
