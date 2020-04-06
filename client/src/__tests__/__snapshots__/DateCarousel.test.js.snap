@@ -1,0 +1,211 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DateCarousel should render correctly with no props 1`] = `"<div class=\\"MuiBox-root MuiBox-root-5 makeStyles-carouselSlides-3\\"><div><div class=\\"BrainhubCarousel makeStyles-carousel-1\\"><div class=\\"BrainhubCarousel__customArrows BrainhubCarousel__arrow--disable BrainhubCarousel__custom-arrowLeft\\"><div class=\\"MuiBox-root MuiBox-root-6\\"></div></div><div class=\\"BrainhubCarousel__trackContainer\\"><ul class=\\"BrainhubCarousel__track\\" style=\\"width:0px;margin-left:NaNpx;transform:translateX(NaNpx)\\"></ul></div><div class=\\"BrainhubCarousel__customArrows BrainhubCarousel__arrow--disable BrainhubCarousel__custom-arrowRight\\"><div class=\\"MuiBox-root MuiBox-root-7\\"></div></div></div></div><div><div class=\\"BrainhubCarousel makeStyles-carousel-1\\"><div class=\\"BrainhubCarousel__customArrows BrainhubCarousel__custom-arrowLeft\\"><svg class=\\"MuiSvgIcon-root makeStyles-customArrow-2\\" focusable=\\"false\\" viewBox=\\"0 0 24 24\\" aria-hidden=\\"true\\" role=\\"presentation\\"><path d=\\"M16.62 2.99c-.49-.49-1.28-.49-1.77 0L6.54 11.3c-.39.39-.39 1.02 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z\\"></path></svg></div><div class=\\"BrainhubCarousel__trackContainer\\"><ul class=\\"BrainhubCarousel__track\\" style=\\"width:0px;margin-left:0px;transform:translateX(60px)\\"></ul></div><div class=\\"BrainhubCarousel__customArrows BrainhubCarousel__custom-arrowRight\\"><svg class=\\"MuiSvgIcon-root makeStyles-customArrow-2\\" focusable=\\"false\\" viewBox=\\"0 0 24 24\\" aria-hidden=\\"true\\" role=\\"presentation\\"><path d=\\"M7.38 21.01c.49.49 1.28.49 1.77 0l8.31-8.31c.39-.39.39-1.02 0-1.41L9.15 2.98c-.49-.49-1.28-.49-1.77 0s-.49 1.28 0 1.77L14.62 12l-7.25 7.25c-.48.48-.48 1.28.01 1.76z\\"></path></svg></div></div></div></div>"`;
+
+exports[`DateCarousel should take a snapshot 1`] = `
+<DocumentFragment>
+  <div
+    class="MuiBox-root MuiBox-root-17 makeStyles-carouselSlides-3"
+  >
+    <div>
+      <div
+        class="BrainhubCarousel makeStyles-carousel-1"
+      >
+        <div
+          class="BrainhubCarousel__customArrows BrainhubCarousel__custom-arrowLeft"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root makeStyles-customArrow-2"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M16.62 2.99c-.49-.49-1.28-.49-1.77 0L6.54 11.3c-.39.39-.39 1.02 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z"
+            />
+          </svg>
+        </div>
+        <div
+          class="BrainhubCarousel__trackContainer"
+        >
+          <ul
+            class="BrainhubCarousel__track BrainhubCarousel__track--transition BrainhubCarousel__track--draggable"
+            style="width: 0px; transform: translateX(-180px); margin-left: 0px; transition-duration: 500ms, 500ms;"
+          >
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-20"
+              >
+                2019
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable BrainhubCarouselItem--active"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-21"
+              >
+                2020
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-22"
+              >
+                2021
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-23"
+              >
+                2022
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-24"
+              >
+                2023
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-25"
+              >
+                2024
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-26"
+              >
+                2025
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-27"
+              >
+                2026
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-28"
+              >
+                2027
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-29"
+              >
+                2028
+              </div>
+            </li>
+            <li
+              class="BrainhubCarouselItem BrainhubCarouselItem--clickable"
+              style="padding-right: 0px; padding-left: 0px; width: 120px; max-width: 120px; min-width: 120px;"
+            >
+              <div
+                class="MuiBox-root MuiBox-root-30"
+              >
+                2029
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div
+          class="BrainhubCarousel__customArrows BrainhubCarousel__custom-arrowRight"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root makeStyles-customArrow-2"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M7.38 21.01c.49.49 1.28.49 1.77 0l8.31-8.31c.39-.39.39-1.02 0-1.41L9.15 2.98c-.49-.49-1.28-.49-1.77 0s-.49 1.28 0 1.77L14.62 12l-7.25 7.25c-.48.48-.48 1.28.01 1.76z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div
+        class="BrainhubCarousel makeStyles-carousel-1"
+      >
+        <div
+          class="BrainhubCarousel__customArrows BrainhubCarousel__custom-arrowLeft"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root makeStyles-customArrow-2"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M16.62 2.99c-.49-.49-1.28-.49-1.77 0L6.54 11.3c-.39.39-.39 1.02 0 1.41l8.31 8.31c.49.49 1.28.49 1.77 0s.49-1.28 0-1.77L9.38 12l7.25-7.25c.48-.48.48-1.28-.01-1.76z"
+            />
+          </svg>
+        </div>
+        <div
+          class="BrainhubCarousel__trackContainer"
+        >
+          <ul
+            class="BrainhubCarousel__track"
+            style="width: 0px; margin-left: 0px; transform: translateX(60px);"
+          />
+        </div>
+        <div
+          class="BrainhubCarousel__customArrows BrainhubCarousel__custom-arrowRight"
+        >
+          <svg
+            aria-hidden="true"
+            class="MuiSvgIcon-root makeStyles-customArrow-2"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M7.38 21.01c.49.49 1.28.49 1.77 0l8.31-8.31c.39-.39.39-1.02 0-1.41L9.15 2.98c-.49-.49-1.28-.49-1.77 0s-.49 1.28 0 1.77L14.62 12l-7.25 7.25c-.48.48-.48 1.28.01 1.76z"
+            />
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</DocumentFragment>
+`;

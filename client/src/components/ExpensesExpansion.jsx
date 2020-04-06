@@ -131,6 +131,7 @@ const ExpensesExpansion = () => {
           : dispatch(fetchExpenses([]));
       })
       .catch(err => console.log(err));
+    console.log("expenses", expenses);
   }, [month, year, user.email]);
 
   useEffect(() => {

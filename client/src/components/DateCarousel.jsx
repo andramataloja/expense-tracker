@@ -73,6 +73,7 @@ const DateCarousel = () => {
         ))}
       ></Carousel>
       <Carousel
+        data-testid="monthState"
         className={classes.carousel}
         centered
         itemWidth={120}

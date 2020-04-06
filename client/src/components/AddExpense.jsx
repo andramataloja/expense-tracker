@@ -109,12 +109,16 @@ const AddExpense = props => {
           fontSize="large"
           onClick={() => setOpen(true)}
           className={classes.addButton}
+          data-testid="add-button"
+          role="button"
         />
       </Fab>
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         aria-labelledby="form-dialog-title"
+        data-testid="add-dialog"
+        role="dialog"
       >
         <DialogTitle id="form-dialog-title">Add Expense</DialogTitle>
         <DialogContent>
@@ -190,6 +194,7 @@ const AddExpense = props => {
         </DialogContent>
         <DialogActions>
           <Button
+            id="cancelBtn"
             onClick={() => setOpen(false)}
             className={classes.addCommands}
           >
