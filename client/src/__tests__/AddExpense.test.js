@@ -1,13 +1,22 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { cleanup, render, fireEvent } from "@testing-library/react";
+import {
+  cleanup,
+  render,
+  fireEvent,
+  screen,
+  wait,
+  waitForElement
+} from "@testing-library/react";
 import AddExpense from "../components/AddExpense";
 import { useAuth0 } from "../utils/auth0-context";
-import { createStore } from "redux";
 import { Provider } from "react-redux";
-import { initialState, rootReducer } from "../reducers/RootReducer";
-import { shallow, mount } from "enzyme";
 import { act } from "react-dom/test-utils";
+
+import thunk from "redux-thunk";
+import configureMockStore from "redux-mock-store";
+import mockAxios from "axios";
+
+const API = "http://localhost:3000";
 
 const user = {
   email: "johndoe@me.com",
@@ -16,21 +25,14 @@ const user = {
 };
 
 jest.mock("../utils/auth0-context");
+jest.mock("../store.js");
 
-const renderWithRedux = (
-  component,
-  { initialState, store = createStore(rootReducer, initialState) } = {}
-) => {
-  return {
-    ...render(<Provider store={store}>{component}</Provider>),
-    store
-  };
-};
+describe("Add Expense", () => {
+  const middlewares = [thunk];
+  const mockStore = configureMockStore(middlewares);
 
-describe("Add Expense button", () => {
   afterEach(cleanup);
   beforeEach(() => {
-    // Mock the Auth0 hook and make it return a logged in state
     useAuth0.mockReturnValue({
       isAuthenticated: true,
       user,
@@ -38,54 +40,81 @@ describe("Add Expense button", () => {
       loginWithRedirect: jest.fn()
     });
     require("mutationobserver-shim");
+    mockAxios.get.mockImplementationOnce(() => Promise.resolve(mockData));
   });
 
-  it("should take a snapshot of add button", () => {
-    const { asFragment } = renderWithRedux(<AddExpense />);
+  const mockData = {
+    data: [
+      {
+        category_id: 3,
+        category_name: "Entertainment",
+        icon: "Entertainment",
+        fill: "#EA6E6E"
+      },
+      {
+        category_id: 1,
+        category_name: "Food",
+        icon: "Food",
+        fill: "#FCD246"
+      }
+    ]
+  };
+
+  it("fetches successfully data from an API", async () => {
+    expect(mockAxios.get(`${API}/get/categories`)).resolves.toEqual(mockData);
+    expect(mockAxios.get).toHaveBeenCalledWith(`${API}/get/categories`);
+  });
+
+  it("should take a snapshot of add button", async () => {
+    const store = mockStore();
+    const { asFragment } = render(
+      <Provider store={store}>
+        <AddExpense />
+      </Provider>
+    );
+    await act(wait);
+
     expect(asFragment(<AddExpense />)).toMatchSnapshot();
   });
 
-  it("add button renders without crashing", () => {
-    const { getByTestId } = renderWithRedux(<AddExpense />);
-    expect(getByTestId("add-button")).toBeInTheDocument();
+  it("add button opens add expense dialog", async () => {
+    const store = mockStore();
+    jest.useFakeTimers();
+    render(
+      <Provider store={store}>
+        <AddExpense />
+      </Provider>
+    );
+    await act(wait);
+
+    expect(screen.queryByTestId("add-dialog")).toBeNull();
+
+    fireEvent.click(screen.getByTestId("add-button"));
+    expect(screen.getByTestId("add-dialog")).toBeVisible();
+
+    fireEvent.click(screen.getByTestId("cancel-button"));
+    await wait(() => expect(screen.getByTestId("add-dialog")).toBeNull()); //miks sa ei tööta??
   });
 
-  it("add icon opens add expense dialog", () => {
-    const { getByTestId } = renderWithRedux(<AddExpense />);
-    fireEvent.click(getByTestId("add-button"));
-    const dialog = getByTestId("add-dialog");
-    expect(dialog).toBeInTheDocument();
-  });
-});
+  it("handlechange in dialog", async () => {
+    const store = mockStore();
+    const handleChange = jest.fn();
+    render(
+      <Provider store={store}>
+        <AddExpense handleChange={handleChange} />
+      </Provider>
+    );
+    await act(wait);
 
-describe("Add Expense dialog component", () => {
-  let wrapper;
-  let store = createStore(rootReducer, initialState);
-  beforeEach(
-    () =>
-      (wrapper = mount(
-        <Provider store={store}>
-          <AddExpense />
-        </Provider>
-      ))
-  );
+    fireEvent.click(screen.getByTestId("add-button"));
 
-  it("should take snapshot of add dialog", () => {
-    expect(wrapper).toMatchSnapshot();
-  });
+    const input = screen.getByTestId("description").querySelector("input");
+    console.log("debug", screen.debug(input));
 
-  it("should render the value of open", () => {
-    /*  console.log("wrapper", wrapper.debug());
-    wrapper.find("button").simulate("click", {
-      open: true
+    fireEvent.change(input, {
+      target: { value: "TEST VALUE" }
     });
-    expect(wrapper.find("dialog").props("open")).toEqual(true); */
-
-    /*  wrapper.find("AddIcon").props("onClick");
-      expect(wrapper.state("open")).toBe(false); */
-
-    console.log("find", wrapper.findByTestId("add-button"));
-    wrapper.find("AddIcon").simulate("click");
-    expect(wrapper.find("Dialog").prop("open")).toEqual(true);
+    expect(input).toHaveValue("TEST VALUE");
+    expect(handleChange).toHaveBeenCalledTimes(1); //miks callib 0 korda?
   });
 });

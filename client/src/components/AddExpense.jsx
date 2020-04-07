@@ -132,6 +132,7 @@ const AddExpense = props => {
                 label="Description"
                 inputRef={register({ required: true, pattern: /.*\S.*/ })}
                 name="description"
+                data-testid="description"
               />
               <span className={classes.errorText}>
                 {errors.description && "Description is required"}
@@ -194,9 +195,9 @@ const AddExpense = props => {
         </DialogContent>
         <DialogActions>
           <Button
-            id="cancelBtn"
             onClick={() => setOpen(false)}
             className={classes.addCommands}
+            data-testid="cancel-button"
           >
             Cancel
           </Button>

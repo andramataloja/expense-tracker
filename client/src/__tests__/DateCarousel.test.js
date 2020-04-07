@@ -1,63 +1,96 @@
 import React from "react";
-import { shallow, mount } from "enzyme";
 import {
   cleanup,
   render,
-  act,
   fireEvent,
+  screen,
+  wait,
   waitForElement
 } from "@testing-library/react";
 import DateCarousel from "../components/DateCarousel";
-import Carousel from "@brainhubeu/react-carousel";
-import { createStore } from "redux";
+import { useAuth0 } from "../utils/auth0-context";
 import { Provider } from "react-redux";
-import { initialState, rootReducer } from "../reducers/RootReducer";
-import ReactDOM from "react-dom";
-import axiosMock from "axios";
+import { act } from "react-dom/test-utils";
 
-const renderWithRedux = (
-  component,
-  { initialState, store = createStore(rootReducer, initialState) } = {}
-) => {
-  return {
-    ...render(<Provider store={store}>{component}</Provider>),
-    store
-  };
+import thunk from "redux-thunk";
+import configureMockStore from "redux-mock-store";
+import mockAxios from "axios";
+
+const API = "http://localhost:3000";
+
+const user = {
+  email: "johndoe@me.com",
+  email_verified: true,
+  sub: "google-oauth2|12345678901234"
 };
 
+jest.mock("../utils/auth0-context");
+jest.mock("../store.js");
+
 describe("DateCarousel", () => {
+  const middlewares = [thunk];
+  const mockStore = configureMockStore(middlewares);
+
   afterEach(cleanup);
-  it("should render correctly with no props", () => {
-    let store = createStore(rootReducer, initialState);
-    const component = shallow(
+  beforeEach(() => {
+    useAuth0.mockReturnValue({
+      isAuthenticated: true,
+      user,
+      logout: jest.fn(),
+      loginWithRedirect: jest.fn()
+    });
+    require("mutationobserver-shim");
+    mockAxios.get.mockImplementationOnce(() => Promise.resolve(mockData));
+  });
+
+  const mockData = {
+    data: [
+      {
+        month_id: 1,
+        month: "January",
+        month_nr: 0
+      },
+      {
+        month_id: 2,
+        month: "February",
+        month_nr: 1
+      }
+    ]
+  };
+
+  it("fetches successfully data from an API", async () => {
+    expect(mockAxios.get(`${API}/get/months`)).resolves.toEqual(mockData);
+    expect(mockAxios.get).toHaveBeenCalledWith(`${API}/get/months`);
+  });
+
+  it("should take a snapshot of datecarousel", async () => {
+    const store = mockStore();
+    const { asFragment } = render(
       <Provider store={store}>
         <DateCarousel />
       </Provider>
     );
-    expect(component.html()).toMatchSnapshot();
-  });
+    await act(wait);
 
-  it("should take a snapshot", () => {
-    const { asFragment } = renderWithRedux(<DateCarousel />);
     expect(asFragment(<DateCarousel />)).toMatchSnapshot();
   });
 
-  it("async axios request works", async () => {
-    axiosMock.get.mockResolvedValue({ data: 2 });
-
-    const url = "/get/months";
-    let store = createStore(rootReducer, initialState);
-    const { getByText, getByTestId, rerender } = render(
+  /* it("handlechange in dialog", async () => {
+    const store = mockStore();
+    const handleChange = jest.fn();
+    render(
       <Provider store={store}>
-        <DateCarousel url={url} />
+        <DateCarousel handleChange={handleChange} />
       </Provider>
     );
+    await act(wait);
+    const carousel = screen.getByTestId("box").querySelector("input");
+    console.log("debugcaro", screen.debug(carousel));
 
-    const resolvedEl = await waitForElement(() => getByTestId("monthState"));
-
-    expect(resolvedEl.value()).toBe(2);
-
-    expect(axiosMock.get).toHaveBeenCalledTimes(1);
-    expect(axiosMock.get).toHaveBeenCalledWith(url);
-  });
+    fireEvent.change(carousel, {
+      target: { value: 3 }
+    });
+    expect(carousel).toHaveValue(3);
+    expect(handleChange).toHaveBeenCalledTimes(1); //miks callib 0 korda?
+  }); */
 });
