@@ -52,9 +52,8 @@ const DateCarousel = () => {
   }, [yearState]);
 
   return (
-    <Box className={classes.carouselSlides} data-testid="box">
+    <Box className={classes.carouselSlides} data-testid="date-carousel">
       <Carousel
-        data-testid="yearState"
         className={classes.carousel}
         centered
         itemWidth={120}
@@ -74,7 +73,6 @@ const DateCarousel = () => {
         ))}
       ></Carousel>
       <Carousel
-        data-testid="monthState"
         className={classes.carousel}
         centered
         itemWidth={120}

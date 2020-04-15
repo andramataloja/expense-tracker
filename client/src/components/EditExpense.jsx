@@ -110,11 +110,13 @@ const EditExpense = props => {
       <CreateIcon
         className={classes.updateButton}
         onClick={() => setOpen(true)}
+        data-testid="edit-button"
       />
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         aria-labelledby="form-dialog-title"
+        data-testid="edit-dialog"
       >
         <DialogTitle id="form-dialog-title">Edit Expense</DialogTitle>
         <DialogContent>
@@ -179,6 +181,7 @@ const EditExpense = props => {
               onChange={event => setCategory(event.target.value)}
               variant="outlined"
               margin="dense"
+              data-testid="category"
             >
               {categoryList.map(option => (
                 <MenuItem key={option.category_id} value={option.category_id}>

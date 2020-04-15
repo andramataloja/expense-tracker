@@ -46,14 +46,19 @@ const DeleteDialog = props => {
 
   return (
     <Box>
-      <DeleteIcon color="secondary" onClick={() => setOpen(true)} />
+      <DeleteIcon
+        color="secondary"
+        onClick={() => setOpen(true)}
+        data-testid="delete-button"
+      />
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
+        data-testid="delete-dialog"
       >
-        <DialogTitle id="alert-dialog-title">{" Delete?"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">Delete?</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you want to delete this expense?

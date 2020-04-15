@@ -4,7 +4,7 @@ exports[`DateCarousel should take a snapshot of datecarousel 1`] = `
 <DocumentFragment>
   <div
     class="MuiBox-root MuiBox-root-5 makeStyles-carouselSlides-3"
-    data-testid="box"
+    data-testid="date-carousel"
   >
     <div>
       <div

@@ -1,24 +1,13 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import {
-  cleanup,
-  render,
-  fireEvent,
-  screen,
-  wait,
-  waitForElement
-} from "@testing-library/react";
+import { cleanup, render, screen, wait } from "@testing-library/react";
 import Dashboard from "../components/Dashboard";
 import { useAuth0 } from "../utils/auth0-context";
 import { act } from "react-dom/test-utils";
 import { Provider } from "react-redux";
-
+import { initialState } from "../reducers/RootReducer";
 import thunk from "redux-thunk";
 import configureMockStore from "redux-mock-store";
 import mockAxios from "axios";
-import { fetchDoughnutData } from "../actions/actions";
-
-const API = "http://localhost:3000";
 
 const user = {
   email: "johndoe@me.com",
@@ -29,7 +18,7 @@ const user = {
 jest.mock("../utils/auth0-context");
 jest.mock("../store.js");
 
-describe("Add Expense", () => {
+describe("Dashboard", () => {
   const middlewares = [thunk];
   const mockStore = configureMockStore(middlewares);
 
@@ -42,7 +31,7 @@ describe("Add Expense", () => {
       loginWithRedirect: jest.fn()
     });
     require("mutationobserver-shim");
-    mockAxios.get.mockImplementationOnce(() => Promise.resolve(mockData));
+    mockAxios.get = jest.fn(() => Promise.resolve(mockData));
   });
 
   const mockData = {
@@ -62,31 +51,51 @@ describe("Add Expense", () => {
     ]
   };
 
-  it("fetches successfully data from an API", async () => {
-    expect(
-      mockAxios.get(`${API}/get/doughnutdata?month=1&year=2020`)
-    ).resolves.toEqual(mockData);
-    expect(mockAxios.get).toHaveBeenCalledWith(
-      `${API}/get/doughnutdata?month=1&year=2020`
-    );
-  });
+  const mockDough = {
+    data: [
+      {
+        category_name: "Entertainment",
+        total: "65",
+        fill: "#EA6E6E"
+      },
+      {
+        category_name: "Food",
+        total: "78.5",
+        fill: "#FCD246"
+      }
+    ]
+  };
 
-  it("should take a snapshot of dashboard", async () => {
-    jest.spyOn(global, "fetch").mockImplementation(() =>
-      Promise.resolve({
-        json: () => Promise.resolve(mockData)
-      })
-    );
-
-    await act(async () => {
-      const store = mockStore();
-      render(
-        <Provider store={store}>
-          <Dashboard month="1" year="2020" />
-        </Provider>
-      );
+  it("should take a snapshot", async () => {
+    const store = mockStore({
+      ...initialState,
+      doughnutData: mockDough
     });
 
-    console.log("debugdash", screen.debug()); // Kuidas DoughnutData.lengthi saan?
+    const { asFragment } = render(
+      <Provider store={store}>
+        <Dashboard />
+      </Provider>
+    );
+    await act(wait);
+    expect(asFragment(<Dashboard />)).toMatchSnapshot();
+  });
+
+  it("should render", async () => {
+    const store = mockStore({
+      ...initialState,
+      doughnutData: mockDough
+    });
+    render(
+      <Provider store={store}>
+        <Dashboard />
+      </Provider>
+    );
+    await act(wait);
+    expect(screen.getByText("Monthly Spending")).toBeVisible();
+    expect(screen.getByTestId("date-carousel")).toBeVisible();
+    expect(screen.getByTestId("doughnutchart")).toBeVisible();
+    expect(screen.getByTestId("add-button")).toBeVisible();
+    expect(screen.getByTestId("expenses-paper")).toBeVisible();
   });
 });

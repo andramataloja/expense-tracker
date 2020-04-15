@@ -1,6 +1,6 @@
 import * as types from "../actions/action-types";
 
-const initialState = {
+export const initialState = {
   month: new Date().getMonth(),
   year: new Date().getFullYear(),
   doughnutData: [],

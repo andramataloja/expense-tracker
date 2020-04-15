@@ -4,10 +4,9 @@ import {
   render,
   fireEvent,
   screen,
-  wait,
-  waitForElement
+  wait
 } from "@testing-library/react";
-import DateCarousel from "../components/DateCarousel";
+import Bar from "../components/Bar";
 import { useAuth0 } from "../utils/auth0-context";
 import { Provider } from "react-redux";
 import { act } from "react-dom/test-utils";
@@ -27,7 +26,7 @@ const user = {
 jest.mock("../utils/auth0-context");
 jest.mock("../store.js");
 
-describe("DateCarousel", () => {
+describe("Bar", () => {
   const middlewares = [thunk];
   const mockStore = configureMockStore(middlewares);
 
@@ -40,52 +39,46 @@ describe("DateCarousel", () => {
       loginWithRedirect: jest.fn()
     });
     require("mutationobserver-shim");
-    mockAxios.get.mockImplementationOnce(() => Promise.resolve(mockData));
   });
 
-  const mockData = {
-    data: [
-      {
-        month_id: 1,
-        month: "January",
-        month_nr: 0
-      },
-      {
-        month_id: 2,
-        month: "February",
-        month_nr: 1
-      }
-    ]
-  };
-
-  it("fetches successfully data from an API", async () => {
-    expect(mockAxios.get(`${API}/get/months`)).resolves.toEqual(mockData);
-    expect(mockAxios.get).toHaveBeenCalledWith(`${API}/get/months`);
-  });
-
-  it("should take a snapshot of datecarousel", async () => {
+  it("should take a snapshot of bar", async () => {
     const store = mockStore();
     const { asFragment } = render(
       <Provider store={store}>
-        <DateCarousel />
+        <Bar />
       </Provider>
     );
     await act(wait);
-
-    expect(asFragment(<DateCarousel />)).toMatchSnapshot();
+    expect(asFragment(<Bar />)).toMatchSnapshot();
   });
 
-  /* it("renders", async () => {
+  it("renders", async () => {
     const store = mockStore();
-    const { container } = render(
+    render(
       <Provider store={store}>
-        <DateCarousel />
+        <Bar />
       </Provider>
     );
     await act(wait);
+    expect(screen.getByText("Monthly Spending")).toBeVisible();
+    expect(screen.getByTestId("open-menu")).toBeVisible();
+    fireEvent.click(screen.getByTestId("open-menu"));
+    expect(screen.getByTestId("menu")).toBeVisible();
+    expect(screen.getByText("Sign out")).toBeVisible();
+  });
 
-    expect(container.firstChild).toHaveClass(
-      "BrainhubCarousel__customArrows BrainhubCarousel__arrow--disable BrainhubCarousel__custom-arrowLeft"
+  it("Signs out works as expected", async () => {
+    const store = mockStore();
+    render(
+      <Provider store={store}>
+        <Bar />
+      </Provider>
     );
-  }); */
+    await act(wait);
+    fireEvent.click(screen.getByTestId("open-menu"));
+    fireEvent.click(screen.getByText("Sign out"));
+    //console.log(screen.debug());
+    //expect(window.location.origin).to.equal(`${API}`);
+    expect(screen.queryByTestId("bar")).not.toBeInTheDocument();
+  });
 });
