@@ -119,7 +119,7 @@ describe("Edit Expense", () => {
     );
   });
   it("renders", async () => {
-    //mockAxios.get = jest.fn(() => Promise.resolve(mockData));
+    mockAxios.get.mockImplementation(() => Promise.resolve(mockData));
     const store = mockStore({
       ...initialState,
       expenses: mockExpenses,

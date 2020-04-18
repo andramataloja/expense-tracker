@@ -10,7 +10,6 @@ import EditExpense from "../components/EditExpense";
 import { useAuth0 } from "../utils/auth0-context";
 import { Provider } from "react-redux";
 import { act } from "react-dom/test-utils";
-import { initialState } from "../reducers/RootReducer";
 import thunk from "redux-thunk";
 import configureMockStore from "redux-mock-store";
 import mockAxios from "axios";
@@ -39,7 +38,16 @@ describe("Edit Expense", () => {
       loginWithRedirect: jest.fn()
     });
     require("mutationobserver-shim");
-    mockAxios.get.mockImplementationOnce(() => Promise.resolve(mockData));
+    mockAxios.get.mockImplementation(url => {
+      switch (url) {
+        case `${API}/get/categories`:
+          return Promise.resolve(mockData);
+        case `${API}/allexpensesbydate?month=1&year=2020&email=john@gmail.com`:
+          return Promise.resolve(mockExpenses);
+        default:
+          return Promise.resolve(mockData);
+      }
+    });
   });
 
   const mockData = {
@@ -63,7 +71,46 @@ describe("Edit Expense", () => {
     amount: 8,
     description: "Snacks",
     category_id: 1,
-    date: "17/03/2020"
+    date: "2020-03-06"
+  };
+
+  const mockPutData = {
+    description: "TEST VALUE",
+    amount: 8,
+    date: "2020-03-17",
+    category_id: 1,
+    email: "johndoe@me.com"
+  };
+
+  const mockExpenses = {
+    data: [
+      {
+        expense_id: 117,
+        description: "food",
+        amount: "14",
+        date_created: "2020-03-12T22:00:00.000Z",
+        date: "2020-03-06T22:00:00.000Z",
+        category_id: 1,
+        email: "john@gmail.com",
+        category_name: "Food",
+        formatted_date: "07/03/2020",
+        month: 3,
+        year: 2020
+      },
+      {
+        expense_id: 116,
+        description: "theatre",
+        amount: "45",
+        date_created: "2020-03-12T22:00:00.000Z",
+        date: "2020-03-06T22:00:00.000Z",
+        category_id: 3,
+        email: "john@gmail.com",
+        category_name: "Entertainment",
+        formatted_date: "07/03/2020",
+        month: 3,
+        year: 2020
+      }
+    ]
   };
 
   it("fetches successfully data from an API", async () => {
@@ -127,11 +174,10 @@ describe("Edit Expense", () => {
     await act(wait);
 
     fireEvent.click(screen.getByTestId("edit-button"));
-    const description = screen.getByLabelText("Description");
     fireEvent.change(screen.getByLabelText("Description"), {
       target: { value: "TEST VALUE" }
     });
-    expect(description).toHaveValue("TEST VALUE");
+    expect(screen.getByLabelText("Description")).toHaveValue("TEST VALUE");
 
     const amount = screen.getByLabelText("Amount");
     fireEvent.change(amount, {
@@ -139,12 +185,10 @@ describe("Edit Expense", () => {
     });
     expect(amount).toHaveValue(5);
 
-    /*  const date = screen.getByLabelText("Date");
-    console.log(screen.debug(date));
-    fireEvent.change(date, {
+    fireEvent.change(screen.getByLabelText("Date"), {
       target: { value: "05/02/2020" }
     });
-    expect(date).toHaveValue("05/02/2020"); */
+    expect(screen.getByLabelText("Date")).toHaveValue("05/02/2020");
 
     const category = screen.getByTestId("category").querySelector("input");
     fireEvent.change(category, {
@@ -154,15 +198,36 @@ describe("Edit Expense", () => {
   });
 
   it("Handle submit", async () => {
-    /*  const store = mockStore();
+    mockAxios.put.mockImplementationOnce(() => Promise.resolve(mockPutData));
+    const store = mockStore();
     const handleSubmit = jest.fn();
     render(
       <Provider store={store}>
-        <EditExpense onSubmit={handleSubmit} />
+        <EditExpense onSubmit={handleSubmit} expense={expense} />
       </Provider>
     );
     await act(wait);
+
     fireEvent.click(screen.getByTestId("edit-button"));
-    fireEvent.click(screen.getByText("Update")); */
+    fireEvent.change(screen.getByLabelText("Description"), {
+      target: { value: "TEST VALUE" }
+    });
+    expect(screen.getByLabelText("Description")).toHaveValue("TEST VALUE");
+    fireEvent.click(screen.getByText("Update"));
+    expect(mockAxios.put(`${API}/put/expense`)).resolves.toEqual(mockPutData);
+    expect(mockAxios.put).toHaveBeenCalledWith(`${API}/put/expense`);
+    expect(mockAxios.put).toHaveBeenCalledTimes(1);
+    expect(
+      mockAxios.get(
+        `${API}/allexpensesbydate?month=1&year=2020&email=john@gmail.com`
+      )
+    ).resolves.toEqual(mockExpenses);
+    expect(mockAxios.get).toHaveBeenCalledWith(
+      `${API}/allexpensesbydate?month=1&year=2020&email=john@gmail.com`
+    );
+    await wait(() =>
+      expect(screen.queryByTestId("edit-dialog")).not.toBeInTheDocument()
+    );
+    expect(screen.getByTestId("edit-button")).toBeVisible();
   });
 });

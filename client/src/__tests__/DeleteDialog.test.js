@@ -30,6 +30,14 @@ describe("Add Expense", () => {
   const middlewares = [thunk];
   const mockStore = configureMockStore(middlewares);
 
+  const mockResponse = {
+    data: { expense_id: 116 },
+    status: 200,
+    statusText: "OK",
+    headers: {},
+    config: {}
+  };
+
   afterEach(cleanup);
   beforeEach(() => {
     useAuth0.mockReturnValue({
@@ -90,6 +98,9 @@ describe("Add Expense", () => {
   });
 
   it("deletes expense", async () => {
+    mockAxios.delete.mockImplementationOnce(() =>
+      Promise.resolve(mockResponse)
+    );
     const store = mockStore();
     const handleDelete = jest.fn();
     render(
@@ -99,7 +110,22 @@ describe("Add Expense", () => {
     );
     await act(wait);
     fireEvent.click(screen.getByTestId("delete-button"));
-    /* fireEvent.click(screen.getByText("Delete"));
-    expect(screen.queryByTestId("delete-dialog")).not.toBeInTheDocument(); */
+    fireEvent.click(screen.getByText("Delete"));
+    /*  await wait(() =>
+      expect(mockAxios.delete).toHaveBeenCalledWith(`${API}/delete/expense`, {
+        data: {
+          expense_id: 116
+        }
+      })
+    );
+    expect(
+      mockAxios.delete(`${API}/delete/expense`, {
+        data: { expense_id: 116 }
+      })
+    ).resolves.toEqual(mockResponse); */
+
+    await wait(() =>
+      expect(screen.queryByTestId("delete-dialog")).not.toBeInTheDocument()
+    );
   });
 });

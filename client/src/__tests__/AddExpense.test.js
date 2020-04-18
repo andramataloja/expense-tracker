@@ -39,7 +39,16 @@ describe("Add Expense", () => {
       loginWithRedirect: jest.fn()
     });
     require("mutationobserver-shim");
-    mockAxios.get.mockImplementationOnce(() => Promise.resolve(mockData));
+    mockAxios.get.mockImplementation(url => {
+      switch (url) {
+        case `${API}/get/categories`:
+          return Promise.resolve(mockData);
+        case `${API}/allexpensesbydate?month=1&year=2020&email=john@gmail.com`:
+          return Promise.resolve(mockExpenses);
+        default:
+          return Promise.resolve(mockData);
+      }
+    });
   });
 
   const mockData = {
@@ -60,26 +69,48 @@ describe("Add Expense", () => {
   };
 
   const mockPostData = {
-    description: "Food",
-    amount: 15,
-    date: "12/03/2020",
+    description: "TEST",
+    amount: "5",
+    date: "2020-03-04T22:00:00.000Z",
     category_id: 1,
-    email: "john@gmail.com"
+    email: "johndoe@me.com"
+  };
+
+  const mockExpenses = {
+    data: [
+      {
+        expense_id: 117,
+        description: "food",
+        amount: "14",
+        date_created: "2020-03-12T22:00:00.000Z",
+        date: "2020-03-06T22:00:00.000Z",
+        category_id: 1,
+        email: "john@gmail.com",
+        category_name: "Food",
+        formatted_date: "07/03/2020",
+        month: 3,
+        year: 2020
+      },
+      {
+        expense_id: 116,
+        description: "theatre",
+        amount: "45",
+        date_created: "2020-03-12T22:00:00.000Z",
+        date: "2020-03-06T22:00:00.000Z",
+        category_id: 3,
+        email: "john@gmail.com",
+        category_name: "Entertainment",
+        formatted_date: "07/03/2020",
+        month: 3,
+        year: 2020
+      }
+    ]
   };
 
   it("fetches successfully data from an API", async () => {
     expect(mockAxios.get(`${API}/get/categories`)).resolves.toEqual(mockData);
     expect(mockAxios.get).toHaveBeenCalledWith(`${API}/get/categories`);
   });
-
-  /*  it("fetches post", async () => {
-    // kuidas post käib?
-    mockAxios.post.mockImplementationOnce(() => Promise.resolve(mockPostData));
-    expect(mockAxios.post(`${API}/post/expensetodb`)).resolves.toEqual(
-      mockPostData
-    );
-    expect(mockAxios.post).toHaveBeenCalledWith(`${API}/post/expensetodb`);
-  }); */
 
   it("should take a snapshot of add button", async () => {
     const store = mockStore();
@@ -113,24 +144,19 @@ describe("Add Expense", () => {
 
   it("Description field change", async () => {
     const store = mockStore();
-    //const handleChange = jest.fn();
-    const logSpy = jest.spyOn(console, "log");
+    const handleChange = jest.fn();
     render(
       <Provider store={store}>
-        <AddExpense /* onChange={handleChange} */ />
+        <AddExpense onChange={handleChange} />
       </Provider>
     );
     await act(wait);
 
     fireEvent.click(screen.getByTestId("add-button"));
-    const description = screen.getByLabelText("Description");
-    fireEvent.change(description, {
+    fireEvent.change(screen.getByLabelText("Description"), {
       target: { value: "TEST VALUE" }
     });
-    expect(description).toHaveValue("TEST VALUE");
-    expect(logSpy).toHaveBeenCalledTimes(1);
-    //expect(handleChange).toHaveBeenCalledTimes(1); //miks callib 0 korda?
-    fireEvent.click(screen.getByText("Add"));
+    expect(screen.getByLabelText("Description")).toHaveValue("TEST VALUE");
   });
 
   it("Amount field change", async () => {
@@ -144,15 +170,14 @@ describe("Add Expense", () => {
     await act(wait);
 
     fireEvent.click(screen.getByTestId("add-button"));
-    const amount = screen.getByLabelText("Amount");
-    fireEvent.change(amount, {
+    fireEvent.change(screen.getByLabelText("Amount"), {
       target: { value: 5 }
     });
-    expect(amount).toHaveValue(5);
-    fireEvent.change(amount, {
+    expect(screen.getByLabelText("Amount")).toHaveValue(5);
+    fireEvent.change(screen.getByLabelText("Amount"), {
       target: { value: "viis" }
     });
-    expect(amount).toHaveValue(null);
+    expect(screen.getByLabelText("Amount")).toHaveValue(null);
   });
 
   it("Date field change", async () => {
@@ -166,11 +191,10 @@ describe("Add Expense", () => {
     await act(wait);
 
     fireEvent.click(screen.getByTestId("add-button"));
-    const date = screen.getByLabelText("Date");
-    fireEvent.change(date, {
+    fireEvent.change(screen.getByLabelText("Date"), {
       target: { value: "05/02/2020" }
     });
-    expect(date).toHaveValue("05/02/2020");
+    expect(screen.getByLabelText("Date")).toHaveValue("05/02/2020");
   });
 
   it("Category field change", async () => {
@@ -214,16 +238,50 @@ describe("Add Expense", () => {
   });
 
   it("Handle submit", async () => {
+    mockAxios.post.mockImplementationOnce(() => Promise.resolve(mockPostData));
     const store = mockStore();
     const handleSubmit = jest.fn();
+    const handleChange = jest.fn();
     render(
       <Provider store={store}>
-        <AddExpense onSubmit={handleSubmit} />
+        <AddExpense onSubmit={handleSubmit} onChange={handleChange} />
       </Provider>
     );
     await act(wait);
 
     fireEvent.click(screen.getByTestId("add-button"));
+    fireEvent.change(screen.getByLabelText("Description"), {
+      target: { value: "TEST" }
+    });
+    fireEvent.change(screen.getByLabelText("Amount"), {
+      target: { value: 5 }
+    });
+    const date = screen.getByTestId("date-field").querySelector("input");
+    fireEvent.change(date, {
+      target: { value: "05/03/2020" }
+    });
+    const category = screen.getByTestId("category").querySelector("input");
+    fireEvent.change(category, {
+      target: { value: "3" }
+    });
+
     fireEvent.click(screen.getByText("Add"));
+    expect(mockAxios.post(`${API}/post/expensetodb`)).resolves.toEqual(
+      mockPostData
+    );
+    expect(mockAxios.post).toHaveBeenCalledWith(`${API}/post/expensetodb`);
+    expect(mockAxios.post).toHaveBeenCalledTimes(1);
+    expect(
+      mockAxios.get(
+        `${API}/allexpensesbydate?month=1&year=2020&email=john@gmail.com`
+      )
+    ).resolves.toEqual(mockExpenses);
+    expect(mockAxios.get).toHaveBeenCalledWith(
+      `${API}/allexpensesbydate?month=1&year=2020&email=john@gmail.com`
+    );
+    await wait(() =>
+      expect(screen.queryByTestId("add-dialog")).not.toBeInTheDocument()
+    );
+    expect(screen.getByTestId("add-button")).toBeVisible();
   });
 });

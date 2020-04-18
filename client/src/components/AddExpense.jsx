@@ -61,7 +61,6 @@ const AddExpense = props => {
 
   const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value });
-    console.log("Changing");
   };
 
   const clearFields = () => {
@@ -172,6 +171,7 @@ const AddExpense = props => {
             </FormControl>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
+                data-testid="date-field"
                 autoOk
                 disableToolbar
                 variant="inline"

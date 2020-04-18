@@ -13,7 +13,6 @@ import { act } from "react-dom/test-utils";
 
 import thunk from "redux-thunk";
 import configureMockStore from "redux-mock-store";
-import mockAxios from "axios";
 
 const API = "http://localhost:3000";
 
@@ -77,8 +76,10 @@ describe("Bar", () => {
     await act(wait);
     fireEvent.click(screen.getByTestId("open-menu"));
     fireEvent.click(screen.getByText("Sign out"));
-    //console.log(screen.debug());
+
     //expect(window.location.origin).to.equal(`${API}`);
-    expect(screen.queryByTestId("bar")).not.toBeInTheDocument();
+    await wait(() =>
+      expect(screen.queryByTestId("bar")).not.toBeInTheDocument()
+    );
   });
 });

@@ -34,7 +34,14 @@ describe("App", () => {
       </Provider>
     );
     await act(wait);
-    console.log(screen.debug());
+    expect(
+      screen.queryByText(
+        "You can log in to your Expense Tracker with Google account"
+      )
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Login with Google account")
+    ).not.toBeInTheDocument();
   });
 
   it("should render Login", async () => {
