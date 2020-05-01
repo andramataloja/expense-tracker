@@ -4,7 +4,7 @@ import {
   render,
   fireEvent,
   screen,
-  wait
+  wait,
 } from "@testing-library/react";
 import DeleteDialog from "../components/DeleteDialog";
 import { useAuth0 } from "../utils/auth0-context";
@@ -20,7 +20,7 @@ const API = "http://localhost:3000";
 const user = {
   email: "johndoe@me.com",
   email_verified: true,
-  sub: "google-oauth2|12345678901234"
+  sub: "google-oauth2|12345678901234",
 };
 
 jest.mock("../utils/auth0-context");
@@ -31,11 +31,7 @@ describe("Add Expense", () => {
   const mockStore = configureMockStore(middlewares);
 
   const mockResponse = {
-    data: { expense_id: 116 },
-    status: 200,
-    statusText: "OK",
-    headers: {},
-    config: {}
+    data: {},
   };
 
   afterEach(cleanup);
@@ -44,7 +40,7 @@ describe("Add Expense", () => {
       isAuthenticated: true,
       user,
       logout: jest.fn(),
-      loginWithRedirect: jest.fn()
+      loginWithRedirect: jest.fn(),
     });
     require("mutationobserver-shim");
   });
@@ -105,24 +101,24 @@ describe("Add Expense", () => {
     const handleDelete = jest.fn();
     render(
       <Provider store={store}>
-        <DeleteDialog onClick={handleDelete} />
+        <DeleteDialog expense_id={116} onClick={handleDelete} />
       </Provider>
     );
     await act(wait);
     fireEvent.click(screen.getByTestId("delete-button"));
     fireEvent.click(screen.getByText("Delete"));
-    /*  await wait(() =>
-      expect(mockAxios.delete).toHaveBeenCalledWith(`${API}/delete/expense`, {
-        data: {
-          expense_id: 116
-        }
+    await wait(() =>
+      expect(mockAxios.delete).toHaveBeenCalledWith("/delete/expense", {
+        params: {
+          expense_id: 116,
+        },
       })
     );
     expect(
-      mockAxios.delete(`${API}/delete/expense`, {
-        data: { expense_id: 116 }
+      mockAxios.delete("/delete/expense", {
+        params: { expense_id: 116 },
       })
-    ).resolves.toEqual(mockResponse); */
+    ).resolves.toEqual(mockResponse);
 
     await wait(() =>
       expect(screen.queryByTestId("delete-dialog")).not.toBeInTheDocument()

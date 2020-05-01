@@ -4,7 +4,7 @@ import {
   render,
   fireEvent,
   screen,
-  wait
+  wait,
 } from "@testing-library/react";
 import ExpensesExpansion from "../components/ExpensesExpansion";
 import { useAuth0 } from "../utils/auth0-context";
@@ -20,7 +20,7 @@ const API = "http://localhost:3000";
 const user = {
   email: "johndoe@me.com",
   email_verified: true,
-  sub: "google-oauth2|12345678901234"
+  sub: "google-oauth2|12345678901234",
 };
 
 jest.mock("../utils/auth0-context");
@@ -36,7 +36,7 @@ describe("Edit Expense", () => {
       isAuthenticated: true,
       user,
       logout: jest.fn(),
-      loginWithRedirect: jest.fn()
+      loginWithRedirect: jest.fn(),
     });
     require("mutationobserver-shim");
     mockAxios.get.mockImplementationOnce(() => Promise.resolve(mockData));
@@ -49,15 +49,15 @@ describe("Edit Expense", () => {
         category_id: 3,
         category_name: "Entertainment",
         icon: "Entertainment",
-        fill: "#EA6E6E"
+        fill: "#EA6E6E",
       },
       {
         category_id: 1,
         category_name: "Food",
         icon: "Food",
-        fill: "#FCD246"
-      }
-    ]
+        fill: "#FCD246",
+      },
+    ],
   };
 
   const mockExpenses = {
@@ -73,7 +73,7 @@ describe("Edit Expense", () => {
         category_name: "Food",
         formatted_date: "07/03/2020",
         month: 3,
-        year: 2020
+        year: 2020,
       },
       {
         expense_id: 116,
@@ -86,23 +86,23 @@ describe("Edit Expense", () => {
         category_name: "Entertainment",
         formatted_date: "07/03/2020",
         month: 3,
-        year: 2020
-      }
-    ]
+        year: 2020,
+      },
+    ],
   };
   const mockDough = {
     data: [
       {
         category_name: "Entertainment",
         total: "65",
-        fill: "#EA6E6E"
+        fill: "#EA6E6E",
       },
       {
         category_name: "Food",
         total: "78.5",
-        fill: "#FCD246"
-      }
-    ]
+        fill: "#FCD246",
+      },
+    ],
   };
 
   it("fetches successfully data from an API", async () => {
@@ -123,7 +123,7 @@ describe("Edit Expense", () => {
     const store = mockStore({
       ...initialState,
       expenses: mockExpenses,
-      doughnutData: mockDough
+      doughnutData: mockDough,
     });
     render(
       <Provider store={store}>
@@ -131,7 +131,7 @@ describe("Edit Expense", () => {
       </Provider>
     );
     await act(wait);
-    //expect(screen.getByTestId("category-panel")).toBeVisible();
-    console.log(screen.debug());
+    expect(screen.getByTestId("expenses-paper")).toBeVisible();
+    console.log("See", screen.debug());
   });
 });
