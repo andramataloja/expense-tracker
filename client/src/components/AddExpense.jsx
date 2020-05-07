@@ -109,12 +109,16 @@ const AddExpense = props => {
           fontSize="large"
           onClick={() => setOpen(true)}
           className={classes.addButton}
+          data-testid="add-button"
+          role="button"
         />
       </Fab>
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         aria-labelledby="form-dialog-title"
+        data-testid="add-dialog"
+        role="dialog"
       >
         <DialogTitle id="form-dialog-title">Add Expense</DialogTitle>
         <DialogContent>
@@ -129,9 +133,15 @@ const AddExpense = props => {
                 inputRef={register({ required: true, pattern: /.*\S.*/ })}
                 name="description"
               />
-              <span className={classes.errorText}>
-                {errors.description && "Description is required"}
-              </span>
+
+              {errors.description && (
+                <span
+                  className={classes.errorText}
+                  data-testid="description-error"
+                >
+                  "Description is required"
+                </span>
+              )}
             </FormControl>
             <FormControl variant="outlined" margin="dense">
               <InputLabel htmlFor="outlined-adornment-amount">
@@ -148,14 +158,20 @@ const AddExpense = props => {
                 type="number"
                 inputProps={{ min: "0" }}
                 name="amount"
-                inputRef={register({ required: true })}
+                inputRef={register({
+                  required: true
+                })}
               />
-              <span className={classes.errorText}>
-                {errors.amount && "Amount is required"}
-              </span>
+
+              {errors.amount && (
+                <span className={classes.errorText} data-testid="amount-error">
+                  "Amount is required"
+                </span>
+              )}
             </FormControl>
             <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <KeyboardDatePicker
+                data-testid="date-field"
                 autoOk
                 disableToolbar
                 variant="inline"
@@ -179,6 +195,7 @@ const AddExpense = props => {
               onChange={event => setCategory(event.target.value)}
               variant="outlined"
               margin="dense"
+              data-testid="category"
             >
               {categoryList.map(option => (
                 <MenuItem key={option.category_id} value={option.category_id}>
@@ -192,6 +209,7 @@ const AddExpense = props => {
           <Button
             onClick={() => setOpen(false)}
             className={classes.addCommands}
+            data-testid="cancel-button"
           >
             Cancel
           </Button>

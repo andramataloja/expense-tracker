@@ -52,7 +52,7 @@ const DateCarousel = () => {
   }, [yearState]);
 
   return (
-    <Box className={classes.carouselSlides}>
+    <Box className={classes.carouselSlides} data-testid="date-carousel">
       <Carousel
         className={classes.carousel}
         centered

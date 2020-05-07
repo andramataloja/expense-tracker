@@ -110,6 +110,7 @@ const ExpensesExpansion = () => {
     );
     dispatch(setExplodeIndex(newExpanded ? panel : ""));
     setExpandedList(swapValue);
+    console.log("categoryList", categoryList);
   };
 
   const generateExpandedList = () => {
@@ -131,6 +132,7 @@ const ExpensesExpansion = () => {
           : dispatch(fetchExpenses([]));
       })
       .catch(err => console.log(err));
+    console.log("expenses", expenses);
   }, [month, year, user.email]);
 
   useEffect(() => {
@@ -204,10 +206,10 @@ const ExpensesExpansion = () => {
   };
 
   return (
-    <Paper>
+    <Paper data-testid="expenses-paper">
       <Container>
         {categoryList.length > 0 && (
-          <Box py={4}>
+          <Box py={4} data-testid="category-panel">
             {categoryList.map(option => (
               <ExpansionPanel
                 key={option.category_id}

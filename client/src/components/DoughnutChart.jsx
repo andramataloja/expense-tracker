@@ -86,7 +86,7 @@ const DoughnutChart = () => {
   };
 
   return (
-    <Box>
+    <Box data-testid="doughnutchart">
       {doughData.length <= 0 && (
         <Box display="flex" justifyContent="center" mt={4} mb={4}>
           <Skeleton variant="circle" width={356} height={356} />

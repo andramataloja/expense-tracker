@@ -38,9 +38,8 @@ const Bar = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log("user", user);
   return (
-    <Box>
+    <Box data-testid="bar">
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h5" className={classes.title}>
@@ -54,6 +53,7 @@ const Bar = () => {
               aria-haspopup="true"
               onClick={handleMenu}
               className={classes.username}
+              data-testid="open-menu"
             >
               <AccountCircle />
             </IconButton>
@@ -71,6 +71,7 @@ const Bar = () => {
               }}
               open={open}
               onClose={handleClose}
+              data-testid="menu"
             >
               {!isLoading && user && (
                 <MenuItem
